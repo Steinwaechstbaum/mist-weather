@@ -1,0 +1,389 @@
+#:import brain functions.brain
+
+#:set MenuButtonNormal 'Images/Buttons/Button_onNormal.png'
+#:set MenuButtonDown 'Images/Buttons/Button_onDown.png'
+#:set TextInputNormal 'Images/TextInput/Text_normal.png'
+#:set TextInputActive 'Images/TextInput/Text_active.png'
+
+#Custom Widgets
+#Unit toggleswitch
+<ToggleImageButton@ToggleButtonBehavior+Image>:
+    source_on: ''
+    source_off: ''
+    source: self.source_on if self.state == 'down' else self.source_off
+    allow_no_selection: False
+    size_hint: None, None
+    size: 100, 100
+<UnitsButton>:
+    button1: SI_setting
+    button2: NU_setting
+    button3: mmHg_setting
+
+    GridLayout:
+        cols: 3
+        
+        ToggleImageButton:
+            id: SI_setting
+            group: 'Units'
+            source_on: 'Images/Buttons/ToggleButton_active_SI.png'
+            source_off: 'Images/Buttons/ToggleButton_normal_SI.png'
+            on_state: root.on_state(0)
+
+        ToggleImageButton:
+            id: NU_setting
+            group: 'Units'
+            source_on: 'Images/Buttons/ToggleButton_active_NU.png'
+            source_off: 'Images/Buttons/ToggleButton_normal_NU.png'
+            on_state: root.on_state(1)
+            
+        ToggleImageButton:
+            id: mmHg_setting
+            group: 'Units'
+            source_on: 'Images/Buttons/ToggleButton_active_Ast.png'
+            source_off: 'Images/Buttons/ToggleButton_normal_Ast.png'
+            on_state: root.on_state(2)
+
+#Main Screen
+<MainScreen>:
+#Adding menu bar for settings and refresh/API call
+    BoxLayout:
+        orientation: 'vertical'
+        id: main_layout
+        background_path: root.background_img
+        canvas.before:
+            Rectangle:
+                source: self.background_path
+                size: (self.width * 16/9, self.height)
+                pos: self.pos
+        GridLayout:
+            cols: 2
+            height: self.minimum_height
+            size_hint_y: None
+
+            Button:
+                font_size: 15
+                text: 'Settings'
+                size_hint_y: None
+                height: self.texture_size[1]*2
+                width: self.texture_size[0]*2
+                border: (0,0,0,0)
+                on_release: 
+                    root.manager.current = 'settings'
+                    root.manager.transition.direction = 'right'
+                background_normal: MenuButtonNormal
+                background_down: MenuButtonDown
+            Button:
+                id: Refresh
+                font_size: 15
+                text: 'Update'
+                size_hint_y: None
+                height: self.texture_size[1]*2
+                border: (0,0,0,0)
+                background_normal: MenuButtonNormal
+                background_down: MenuButtonDown
+                on_release: 
+                    root.load_settings()
+                    brain.request(root.city, root.API)
+                    root.update_current()
+                    root.update_future()
+
+#True main screen: First: Current weather; Second: Forecast
+        Carousel:
+            direction: 'right'                      #ToDo: Get background scrollable
+            ScrollView:
+                do_scroll_x: False
+                do_scroll_y: True
+                GridLayout:
+                    cols: 2
+                    size_hint: (None,None)
+                    height: self.minimum_height
+                    #padding_vertical: 50
+                    padding: [self.center_x/2, self.height/16,self.center_x/2,0]
+                    row_default_height: 55
+                    
+#Location/Time
+                    Label:
+                        text: root.loc#'Tübingen'
+                        font_size: 20
+                        size_hint: (None, None)
+                        halign: 'left'
+                        valign: 'top'
+                        pos: self.width * 0, self.height
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                        
+                    Label:
+                        text: root.time#'0\n0'
+                        font_size: 15
+                        size_hint: (None, None)
+                        halign: 'center'
+                        valign: 'bottom'
+                        pos: self.width * 0, self.height
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+
+#Weather icon
+                    Image:
+                        id: Icon
+                        source: root.weather_icon
+                        #pos_hint: ('center_x', 'center_y')
+                        #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
+                        size_hint: (None, None)
+                        size: self.texture_size
+                        
+                    Label:
+                        text: root.overall
+                        font_size: 15
+                        size_hint: (None, None)
+                        halign: 'center'
+                        valign: 'center'
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+
+#Current temperature
+                    FloatLayout:
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                        Image:
+                            source: 'Images/Icons/Thermometer.png'
+                            size_hint: (None, None)
+                            size: self.texture_size
+                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+
+                    Label:
+                        text: root.temp#'0.025 eV'
+                        font_size: 20
+                        size_hint_x: None
+                        size_hint_y: None
+                        height: self.parent.children[0].height
+                        halign: 'left'
+                        valign: 'center'
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                    
+#Min/Max Temperature
+                    FloatLayout:
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                        Image:
+                            source: 'Images/Icons/DayNight.png'
+                            #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
+                            size_hint: (None, None)
+                            size: self.texture_size
+                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                    Label:
+                        text: root.temp_min + '\n' + root.temp_max#'0.024 eV/0.026 eV'
+                        font_size: 15
+                        size_hint_x: None
+                        size_hint_y: None
+                        height: self.parent.children[0].height
+                        halign: 'left'
+                        valign: 'center'
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+#Humidity           
+                    FloatLayout:
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                        Image:
+                            source: 'Images/Icons/Humidity.png'
+                            #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
+                            size_hint: (None, None)
+                            size: self.texture_size
+                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                    Label:
+                        text: root.hum#'0%'
+                        font_size: 15
+                        text_size: self.size
+                        size_hint_x: None
+                        size_hint_y: None
+                        height: self.parent.children[0].height
+                        halign: 'center'
+                        valign: 'middle'
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+#Percentage overcast
+                    FloatLayout:
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                        Image:
+                            source: 'Images/Icons/Clouds.png'
+                            #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
+                            size_hint: (None, None)
+                            size: self.texture_size
+                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                    Label:
+                        text: root.overcast#'45% (scattered)'
+                        font_size: 15
+                        size_hint_x: None
+                        size_hint_y: None
+                        height: self.parent.children[0].height
+                        halign: 'center'
+                        valign: 'center'
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+#Wind 
+                    FloatLayout:
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                        Image:
+                            source: 'Images/Icons/Wind.png'
+                            #pos: self.texture_size[0], self.texture_size[1]
+                            size_hint: (None, None)
+                            size: self.texture_size
+                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                    Label:
+                        markup: True
+                        text: root.wind#'0.04/90'u"\u00b0"
+                        font_size: 15
+                        size_hint_x: None
+                        size_hint_y: None
+                        height: self.parent.children[0].height
+                        halign: 'center'
+                        valign: 'center'
+                        canvas.before:
+                            Color: 
+                                rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+#Forecast
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Five day forecast'
+                    size: self.size
+                    font_size: 25
+                    size_hint: (.7, None)
+                    pos: (self.width, self.height)
+                    canvas.before:
+                        Color: 
+                            rgba: (.1,.1,.1,.4)
+                            Rectangle:
+                                size: self.size
+                                pos: self.pos
+                ScrollView:
+                    do_scroll_x: False
+                    do_scroll_y: True
+                    size_hint: (1, 1)
+
+                    BoxLayout:
+                        orientation: 'vertical'
+                        ScrollView:
+                            do_scroll_x: True
+                            do_scroll_y: True
+                            Image:
+                                id: ForeCast
+                                source: root.future_image
+                                size_hint_x: None
+                                size_hint_y: None
+                                size: self.texture_size
+                                pos: self.pos
+                            
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        canvas.before:
+            Rectangle:
+                source: 'Images/Background/settings.png'
+                size: (self.width * 16/9, self.height)
+                pos: (self.pos[0]/2, self.pos[1])
+        Button:
+            font_size: 15
+            text: 'Return'
+            size_hint_y: None
+            height: self.texture_size[1]*2
+            border: (0,0,0,0)
+            background_normal: MenuButtonNormal
+            background_down: MenuButtonDown
+            on_release: 
+                root.manager.current = 'main'
+                root.manager.transition.direction = 'left'
+        UnitsButton:
+            id: unit_select
+            size_hint_y: None
+        GridLayout:
+            cols: 1
+            size_hint: (.9,None)
+            height: self.minimum_height
+            padding: self.width/8
+            spacing: self.width/16
+            TextInput:
+                id: city_field
+                hint_text: 'City'
+                on_text_validate: root.update_city(self.text)
+                background_normal: TextInputNormal
+                background_active: TextInputActive
+                foreground_color: (1,1,1,1)
+                multiline: False
+                font_size: 25
+                size_hint_y: None
+                height: 40
+            Label:
+                text: 'API key:'
+                size_hint_y: None
+                font_size: 25
+                valign: 'bottom'
+                height: self.font_size
+                halign: 'left'
+            TextInput:
+                id: API_field
+                foreground_color: (1,1,1,1)
+                text: 'Enter your API key'#Default 'a0376cd9d4dce9f2213b7ca9a21cc905'
+                on_text_validate: root.update_API(self.text)
+                background_normal: TextInputNormal
+                background_active: TextInputActive
+                multiline: False
+                font_size: 25
+                size_hint_y: None
+                height: 40
+        Widget:
