@@ -8,8 +8,13 @@ import functions.draw as draw
 from kivy.core.window import Window
 Window.size = (300, 500)
 
+from kivy.utils import platform
+if platform == "android":
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
+
 #Storage modules
-settings = JsonStore('./settings.json')
+settings = JsonStore('./storage/settings.json')
 
 #Custom togglebutton for settings
 class UnitsButton(Widget):
@@ -71,7 +76,7 @@ class MainScreen(Screen):
     overcast = StringProperty('0 (blank)')
     wind = StringProperty('0 (0)')
     overall = StringProperty('Clear')
-    future_image = StringProperty('./forecast.png')
+    future_image = StringProperty('./Images/forecast.png')
 
     #Initialize main screen
     def __init__(self, *args, **kwargs):
@@ -87,7 +92,7 @@ class MainScreen(Screen):
 
     #Load current settings
     def load_settings(self):
-        settings = JsonStore('./settings.json')
+        settings = JsonStore('./storage/settings.json')
         self.settings_data = settings.get('settings')
         self.city = self.settings_data.get('city')
         self.units = self.settings_data.get('units')
@@ -95,7 +100,7 @@ class MainScreen(Screen):
 
     #Update first screen and background
     def update_current(self):
-        data_file_current = JsonStore('current.json')
+        data_file_current = JsonStore('./storage/current.json')
         main = data_file_current.get('main')
         weather = data_file_current.get('weather')
         clouds = data_file_current.get('clouds')
@@ -127,6 +132,7 @@ class WeatherApp(App):
         sm = ScreenManager()
         sm.add_widget(MainScreen(name='main'))
         sm.add_widget(SettingsScreen(name='settings'))
+        self.icon = 'Images/Icons/App_icon.png'
         return sm
     
 if __name__ == '__main__':

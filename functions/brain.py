@@ -16,7 +16,7 @@ def request(city, API):
     if response_current.status_code == 200:
         data_current = response_current.json()
         lat, lon = data_current['coord']['lat'], data_current['coord']['lon']
-        current_file = open('current.json', 'w')
+        current_file = open('./storage/current.json', 'w')
         dump(data_current, current_file)
         current_file.close()
         #Build url for forecast and send request
@@ -24,7 +24,7 @@ def request(city, API):
         response_forecast = requests.get(url_forecast)
         if response_forecast.status_code == 200:
             data_forecast = response_forecast.json()
-            forecast_file = open('./forecast.json', 'w')
+            forecast_file = open('./storage/forecast.json', 'w')
             dump(data_forecast, forecast_file)
             forecast_file.close()
     else:
