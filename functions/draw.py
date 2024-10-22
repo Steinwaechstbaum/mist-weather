@@ -110,7 +110,7 @@ def plot_all(unit: int):
     Plots Temp., rain, wind, pressure, humdity, clouds and stores the plots in one .png
     '''
     #Read in data and divide it into lists
-    data = JsonStore('forecast.json').get('list')
+    data = JsonStore('./storage/forecast.json').get('list')
 
     dt = [look_up.conv_time(i.get('dt'), unit) for i in data]
     dt = [datetime.datetime.strptime(i, '%d %b %Y\n%H:%M:%S') for i in dt]
@@ -197,7 +197,7 @@ def plot_all(unit: int):
     clouds.fill_between(dt, min(cloud_lst), cloud_lst, 
                         color=(1,1,1,.7))
 
-    fig.savefig('./forecast.png', facecolor=fig.get_facecolor())
+    fig.savefig('./Images/forecast.png', facecolor=fig.get_facecolor())
     return 0
 
 plot_all(1)
