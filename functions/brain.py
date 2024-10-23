@@ -27,8 +27,7 @@ def request(city, API):
             forecast_file = open('./storage/forecast.json', 'w')
             dump(data_forecast, forecast_file)
             forecast_file.close()
-    else:
-        print('Error fetching weather data')
+
 
 
 
