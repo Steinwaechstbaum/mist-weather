@@ -11,7 +11,7 @@ This system of units is mostly used in the field of particle physics. Its build 
 * Angles in [rad]
 * Length in dimension of $\frac{1}{\text{eV}}$ via $\hbar c\approx 197\text{MeV}\\,\text{fm}$
 * Pressure in dimensions of $\frac{\text{eV}^4}{\hbar^2c^3}$
-* 
+  
 ### Astronomical Units 
 Units used in astronomy are linked to typical scales encountered in that field of physics. An example, often met is expressing mass in terms of the solar mass or the mass of Jupiter. 
 In addition, some measures are related to their observable properties, such as the chemical composition of a star has its distinct spectral footprint. The scales used within this application are: 
@@ -20,8 +20,8 @@ In addition, some measures are related to their observable properties, such as t
 * Velocity in terms of astronomical units (AU) by years (yr).
 * Angles in arcsecond, $1"=\frac{1}{3600}^\circ$
 * Length in multiples of the radius of the earth $r_♁=6371\\,\text{km}$
-* Pressure is a bit far-fetched: It's given as radius of a neutron star, with homogenous density of $\rho=8.35\cdot 10^{16}\frac{\text{kg}}{\text{m}^3}$ ,whose inner pressure coincides with our atmospheric pressure. $r=\sqrt{\frac{3}{2\pi}\frac{P}{G\rho^2}}$
-* 
+* Pressure is a bit far-fetched: It's given as radius of a neutron star, with homogenous density of $\rho=8.35\cdot 10^{16}\frac{\text{kg}}{\text{m}^3}$, whose inner pressure coincides with our atmospheric pressure. $r=\sqrt{\frac{3}{2\pi}\frac{P}{G\rho^2}}$
+  
 ## Installation
 ### Prerequisits
 In addition to python, the following modules are required in order to run the project using a python compiler: kivy, requests, datetime, matplotlib, android.
@@ -33,6 +33,7 @@ pip install matplotlib
 ```
 When building the application for android use, then I highly recommend building the app using buildozer. In that case, feel free to follow the [installation guide](https://buildozer.readthedocs.io/en/latest/installation.html)
 In order to use the app, you will also need an individual API key to receive the weather data provided by [OpenWeatherMap](https://openweathermap.org/). Simply register on the website and verify your account. After that, your key is located under your profile/My API keys and you're good to go.
+
 ## Using the weather app
 #### On Linux
 When using Linux, simply run
@@ -50,8 +51,10 @@ It will take a few minutes building the apk. As soon as the building process is 
 
 ### Using the the app the first time 
 When you use the app for the first time, go into settings and replace 'API key' with your API key received by OpenWeatherMap. 
+
 ### General use 
 The app is ready to use after inserting the key. In the setting, you are able to change the units, the weather should represented with. Other then that, its a simple (confusing) weather app. The first page displays the current weather. When swiping to the right you'll see a 5-day-forecast. 
+
 ## Future plans I will try further to work on the app in my free time: 
 - [ ] Clean up the weather.kv file
 - [ ] Enhance widget placement for different screens
