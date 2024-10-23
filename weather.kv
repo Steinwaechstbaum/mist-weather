@@ -1,4 +1,5 @@
 #:import brain functions.brain
+#:import webbrowser webbrowser
 
 #:set MenuButtonNormal 'Images/Buttons/Button_onNormal.png'
 #:set MenuButtonDown 'Images/Buttons/Button_onDown.png'
@@ -11,9 +12,10 @@
     source_on: ''
     source_off: ''
     source: self.source_on if self.state == 'down' else self.source_off
+    allow_stretch: True
     allow_no_selection: False
     size_hint: None, None
-    size: 100, 100
+    size: dp(100), dp(100)
 <UnitsButton>:
     button1: SI_setting
     button2: NU_setting
@@ -21,7 +23,9 @@
 
     GridLayout:
         cols: 3
-        
+        height: dp(120)
+        size_hint_y: None
+        spacing_horizontal: dp(20)
         ToggleImageButton:
             id: SI_setting
             group: 'Units'
@@ -51,21 +55,23 @@
         id: main_layout
         background_path: root.background_img
         canvas.before:
+            Color:
+                rgb: (.2,.2,.2)
             Rectangle:
-                source: self.background_path
+                #source: self.background_path
                 size: (self.width * 16/9, self.height)
                 pos: self.pos
         GridLayout:
             cols: 2
-            height: self.minimum_height
+            height: dp(self.minimum_height)
             size_hint_y: None
         
             Button:
-                font_size: 15
+                font_size: dp(15)
                 text: 'Settings'
                 size_hint_y: None
-                height: self.texture_size[1]*2
-                width: self.texture_size[0]*2
+                height: dp(self.texture_size[1])
+                width: dp(self.texture_size[0])
                 border: (0,0,0,0)
                 on_release: 
                     root.manager.current = 'settings'
@@ -74,10 +80,10 @@
                 background_down: MenuButtonDown
             Button:
                 id: Refresh
-                font_size: 15
+                font_size: dp(15)
                 text: 'Update'
                 size_hint_y: None
-                height: self.texture_size[1]*2
+                height: dp(self.texture_size[1])
                 border: (0,0,0,0)
                 background_normal: MenuButtonNormal
                 background_down: MenuButtonDown
@@ -89,26 +95,32 @@
 
 #True main screen: First: Current weather; Second: Forecast
         Carousel:
-            direction: 'right'                      #ToDo: Get background scrollable
+            direction: 'right'
             ScrollView:
                 do_scroll_x: False
                 do_scroll_y: True
+                size_hint_x: 1
                 GridLayout:
                     cols: 2
                     size_hint: (None,None)
-                    height: self.minimum_height
-                    #padding_vertical: 50
-                    padding: [self.center_x/2, self.height/16,self.center_x/2,0]
-                    row_default_height: 55
+                    height: dp(self.minimum_height)
+                    padding: [dp(self.parent.center_x*2/8), 0, dp(self.center_x/2),0]
                     
 #Location/Time
+                    Widget:
+                        height: dp(1)
+                        size_hint_y: None
+                    Widget:
+                        height: dp(1)
+                        size_hint_y: None
                     Label:
-                        text: root.loc#'Tübingen'
-                        font_size: 20
+                        text: root.loc
+                        font_size: dp(20)
                         size_hint: (None, None)
-                        halign: 'left'
+                        halign: 'center'
                         valign: 'top'
-                        pos: self.width * 0, self.height
+                        pos: dp(self.width * 0), dp(self.height)
+                        size: dp(100), dp(55)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -117,12 +129,13 @@
                                 pos: self.pos
                         
                     Label:
-                        text: root.time#'0\n0'
-                        font_size: 15
+                        text: root.time
+                        font_size: dp(15)
                         size_hint: (None, None)
                         halign: 'center'
                         valign: 'bottom'
-                        pos: self.width * 0, self.height
+                        pos: dp(self.width * 0), dp(self.height)
+                        size: dp(100), dp(55)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -134,17 +147,18 @@
                     Image:
                         id: Icon
                         source: root.weather_icon
-                        #pos_hint: ('center_x', 'center_y')
-                        #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
                         size_hint: (None, None)
-                        size: self.texture_size
+                        size: dp(100), dp(100)
+                        pos_hint: {'x': 0.5, 'y': .5}
+                        fit_mode: 'contain'
                         
                     Label:
                         text: root.overall
-                        font_size: 15
+                        font_size: dp(15)
                         size_hint: (None, None)
                         halign: 'center'
                         valign: 'center'
+                        size: dp(100), dp(100)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -154,26 +168,28 @@
 
 #Current temperature
                     FloatLayout:
+                        size_hint: (None, None)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
                             Rectangle:
-                                size: self.size
+                                size: (self.size[0]*2, self.size[1])
                                 pos: self.pos
                         Image:
                             source: 'Images/Icons/Thermometer.png'
                             size_hint: (None, None)
-                            size: self.texture_size
-                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                            size: dp(50), dp(50)
+                            allow_stretch: True
+                            pos_hint: {'center_x': 1, 'center_y': .5}
 
                     Label:
-                        text: root.temp#'0.025 eV'
-                        font_size: 20
+                        text: root.temp
+                        font_size: dp(20)
                         size_hint_x: None
                         size_hint_y: None
-                        height: self.parent.children[0].height
                         halign: 'left'
                         valign: 'center'
+                        size: dp(100), dp(55)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -183,26 +199,28 @@
                     
 #Min/Max Temperature
                     FloatLayout:
+                        size_hint: (None, None)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
                             Rectangle:
-                                size: self.size
+                                size: (self.size[0]*2, self.size[1])
                                 pos: self.pos
                         Image:
                             source: 'Images/Icons/DayNight.png'
-                            #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
                             size_hint: (None, None)
-                            size: self.texture_size
-                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                            size: dp(50), dp(50)
+                            allow_stretch: True
+                            pos_hint: {'center_x': 1, 'center_y': .5}
                     Label:
-                        text: root.temp_min + '\n' + root.temp_max#'0.024 eV/0.026 eV'
-                        font_size: 15
+                        text: root.temp_min + '\n' + root.temp_max
+                        font_size: dp(15)
                         size_hint_x: None
                         size_hint_y: None
-                        height: self.parent.children[0].height
+                        height: dp(self.parent.children[0].height)
                         halign: 'left'
                         valign: 'center'
+                        size: dp(100), dp(55)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -211,27 +229,29 @@
                                 pos: self.pos
 #Humidity           
                     FloatLayout:
+                        size_hint: (None, None)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
                             Rectangle:
-                                size: self.size
+                                size: (self.size[0]*2, self.size[1])
                                 pos: self.pos
                         Image:
                             source: 'Images/Icons/Humidity.png'
-                            #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
                             size_hint: (None, None)
-                            size: self.texture_size
-                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                            size: dp(50), dp(50)
+                            allow_stretch: True
+                            pos_hint: {'center_x': 1, 'center_y': .5}
                     Label:
-                        text: root.hum#'0%'
-                        font_size: 15
+                        text: root.hum
+                        font_size: dp(15)
                         text_size: self.size
                         size_hint_x: None
                         size_hint_y: None
-                        height: self.parent.children[0].height
+                        height: dp(self.parent.children[0].height)
                         halign: 'center'
                         valign: 'middle'
+                        size: dp(100), dp(55)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -240,26 +260,28 @@
                                 pos: self.pos
 #Percentage overcast
                     FloatLayout:
+                        size_hint: (None, None)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
                             Rectangle:
-                                size: self.size
+                                size: (self.size[0]*2, self.size[1])
                                 pos: self.pos
                         Image:
                             source: 'Images/Icons/Clouds.png'
-                            #pos: self.center_x - self.width / 4, self.center_y - self.height / 4
                             size_hint: (None, None)
-                            size: self.texture_size
-                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                            size: dp(50), dp(50)
+                            allow_stretch: True
+                            pos_hint: {'center_x': 1, 'center_y': .5}
                     Label:
-                        text: root.overcast#'45% (scattered)'
-                        font_size: 15
+                        text: root.overcast
+                        font_size: dp(15)
                         size_hint_x: None
                         size_hint_y: None
-                        height: self.parent.children[0].height
+                        height: dp(self.parent.children[0].height)
                         halign: 'center'
                         valign: 'center'
+                        size: dp(100), dp(55)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -268,27 +290,29 @@
                                 pos: self.pos
 #Wind 
                     FloatLayout:
+                        size_hint: (None, None)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
                             Rectangle:
-                                size: self.size
+                                size: (self.size[0]*2, self.size[1])
                                 pos: self.pos
                         Image:
                             source: 'Images/Icons/Wind.png'
-                            #pos: self.texture_size[0], self.texture_size[1]
                             size_hint: (None, None)
-                            size: self.texture_size
-                            pos_hint: {'center_x': 0.5, 'center_y': .5}
+                            size: dp(50), dp(50)
+                            allow_stretch: True
+                            pos_hint: {'center_x': 1, 'center_y': .5}
                     Label:
                         markup: True
-                        text: root.wind#'0.04/90'u"\u00b0"
-                        font_size: 15
+                        text: root.wind
+                        font_size: dp(15)
                         size_hint_x: None
                         size_hint_y: None
                         height: self.parent.children[0].height
                         halign: 'center'
                         valign: 'center'
+                        size: dp(100), dp(55)
                         canvas.before:
                             Color: 
                                 rgba: (.1,.1,.1,.4)
@@ -300,9 +324,9 @@
                 orientation: 'vertical'
                 Label:
                     text: 'Five day forecast'
-                    size: self.size
-                    font_size: 25
-                    size_hint: (.7, None)
+                    size: dp(25), dp(100)
+                    font_size: dp(25)
+                    size_hint: (.7, .1)
                     pos: (self.width, self.height)
                     canvas.before:
                         Color: 
@@ -320,43 +344,47 @@
                         ScrollView:
                             do_scroll_x: True
                             do_scroll_y: True
+                            scroll_x: .4
+                            scroll_y: .65
                             Image:
                                 id: ForeCast
                                 source: root.future_image
                                 size_hint_x: None
                                 size_hint_y: None
-                                size: self.texture_size
+                                size: dp(self.texture_size[0]), dp(self.texture_size[1])
                                 pos: self.pos
                             
 
 <SettingsScreen>:
     BoxLayout:
         orientation: 'vertical'
+        minimum_height: self.minimum_height
         canvas.before:
+            Color:
+                rgb: (.2,.2,.2)
             Rectangle:
-                source: 'Images/Background/settings.png'
+                #source: 'Images/Background/settings.png'
                 size: (self.width * 16/9, self.height)
                 pos: (self.pos[0]/2, self.pos[1])
         Button:
-            font_size: 15
+            font_size: dp(15)
             text: 'Return'
             size_hint_y: None
-            height: self.texture_size[1]*2
+            height: dp(self.texture_size[1])
             border: (0,0,0,0)
             background_normal: MenuButtonNormal
             background_down: MenuButtonDown
             on_release: 
                 root.manager.current = 'main'
                 root.manager.transition.direction = 'left'
-        UnitsButton:
-            id: unit_select
-            size_hint_y: None
         GridLayout:
             cols: 1
+            rows: 4
             size_hint: (.9,None)
             height: self.minimum_height
-            padding: self.width/8
-            spacing: self.width/16
+            padding: [dp(10), dp(10), dp(10), 0]
+            spacing_vertical: dp(20)
+            row_default_height: dp(40)
             TextInput:
                 id: city_field
                 hint_text: 'City'
@@ -365,25 +393,59 @@
                 background_active: TextInputActive
                 foreground_color: (1,1,1,1)
                 multiline: False
-                font_size: 25
+                font_size: dp(25)
                 size_hint_y: None
-                height: 40
+                height: dp(40)
             Label:
                 text: 'API key:'
+                hint_text: 'Your API key'
                 size_hint_y: None
-                font_size: 25
+                font_size: dp(15)
                 valign: 'bottom'
                 height: self.font_size
                 halign: 'left'
             TextInput:
                 id: API_field
                 foreground_color: (1,1,1,1)
-                text: 'Enter your API key'#Default 'a0376cd9d4dce9f2213b7ca9a21cc905'
+                text: 'Enter your API key'
                 on_text_validate: root.update_API(self.text)
                 background_normal: TextInputNormal
                 background_active: TextInputActive
                 multiline: False
-                font_size: 25
+                font_size: dp(25)
                 size_hint_y: None
-                height: 40
+                height: dp(40)  
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint: 1, None
+                heigth: dp(40)
+                canvas.before:
+                    Color: 
+                        rgba: (.7,.7,.7,.4)
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                Label:
+                    markup: True
+                    text: 'Weather data provided by [u][ref=link]OpenWeather[/ref][/u]'
+                    font_size: dp(15)
+                    height: dp(40)
+                    width: dp(40)
+                    halign: 'left'
+                    size_hint: .5, None
+                    multiline: False
+                    on_ref_press:
+                        webbrowser.open('https://openweathermap.org/')
+                Image:
+                    source: 'Images/Icons/OpenWeather-Master-Logo RGB.png'
+                    allow_stretch: True
+                    height: dp(50)
+                    keep_ratio: True
+                    size_hint: .3, None      
+        UnitsButton:
+            id: unit_select
+            size_hint_y: None
+            height: dp(100)
+
         Widget:
+            height: dp(40)

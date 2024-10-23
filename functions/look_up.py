@@ -94,7 +94,7 @@ def conv_deg(deg: float, units: int):
         deg = deg/180
     #Astr.: Given in arcsec
     elif units == 2:
-        deg = deg/3600
+        deg = deg*3600
     return deg
 
 def conv_pres(P: float, units: int):
