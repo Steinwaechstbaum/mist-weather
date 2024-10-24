@@ -55,7 +55,8 @@ If you are using the app for the first time, go to the settings and replace 'API
 ### General use 
 The application is ready to use after inserting the key. In the settings you are able to change the units in which the weather should be displayed. Other then that, it is a simple (confusing) weather app. The first page shows the current weather. Swipe to the right and you'll see a 5-day forecast. 
 
-## Future plans I will try further to work on the app in my free time: 
+## Future plans 
+I will try further to work on the app in my free time: 
 - [ ] Include background images
 - [ ] Clean up the weather.kv file
 - [ ] Enhance widget placement for different screens
